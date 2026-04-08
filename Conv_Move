@@ -1,0 +1,31 @@
+import socket
+import time
+import os
+
+ROBOT = "10.10.0.98" 
+MOVE_PORT = 30003
+GRIP_PORT = 63352 
+CONV_PORT = 2002
+
+convBelt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+convBelt.bind((ROBOT, CONV_PORT))
+#convBelt.connect((ROBOT, CONV_PORT))
+
+convBelt.listen(1)
+conv,addr = convBelt.accept()
+
+with conv:
+    print('Connected by', addr)
+    conv.sendall(b'activate,tcp,0\n')
+    time.sleep(1)
+    conv.sendall(b'pwr_on,conv,0\n')
+    time.sleep(1)
+    conv.sendall(b'set_vel,conv,20\n')
+    time.sleep(1)    
+    conv.sendall(b'jog_stop,conv,0\n')
+    time.sleep(1)    
+    conv.sendall(b'set_vel,conv,10\n')
+    time.sleep(1)
+    conv.sendall(b'jog_fwd,conv,0\n')
+    recv = conv.recv(100)
+    print(recv)
