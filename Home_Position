@@ -1,0 +1,41 @@
+import socket
+import time
+import os
+
+ROBOT = "10.10.0.14" 
+MOVE_PORT = 30003
+GRIP_PORT = 63352 
+CONV_PORT = 2002
+
+s_robotArm = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s_robotArm.connect((ROBOT,MOVE_PORT))
+
+s_robotGrip = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s_robotGrip.connect((ROBOT,GRIP_PORT))
+
+convBelt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+convBelt.bind(("10.10.0.98", CONV_PORT))
+convBelt.listen(1)
+
+s_robotGrip.send(b'GET ACT\n')
+g_recv = str(s_robotGrip.recv(10), 'UTF-8')
+print ('grip =',g_recv)
+s_robotGrip.send(b'SET ACT 1\n')
+print ('Gripper Activated')
+s_robotGrip.send(b'SET GTO 1\n')
+s_robotGrip.send(b'SET FOR 1\n')
+s_robotGrip.send(b'SET SPE 255\n')
+s_robotGrip.send(b'SET POS 0\n')
+down = False
+GRABDOWN = -0.150
+
+coord = [0.116, -0.300, 0.200]
+rot = [0, -3.143, 0]
+s_robotArm.send(f'movel(p[{coord[0]},{coord[1]},{coord[2]},{rot[0]},{rot[1]},{rot[2]}],2,10,0,0)\n'.encode('utf-8'))
+time.sleep(4) 
+
+
+rot = [2.28, 2.157, 0]
+s_robotArm.send(f'movel(p[{coord[0]},{coord[1]},{coord[2]},{rot[0]},{rot[1]},{rot[2]}],2,10,0,0)\n'.encode('utf-8')) #Lift Pen Up
+time.sleep(2) 
+os._exit(0)
