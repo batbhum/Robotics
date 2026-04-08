@@ -2,7 +2,7 @@ import socket
 import time
 import os
 
-ROBOT = "10.10.0.14" 
+ROBOT = "10.10.0.8" #Check IP via tablet again (Subject to change)
 MOVE_PORT = 30003
 GRIP_PORT = 63352 
 CONV_PORT = 2002
@@ -12,10 +12,6 @@ s_robotArm.connect((ROBOT,MOVE_PORT))
 
 s_robotGrip = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s_robotGrip.connect((ROBOT,GRIP_PORT))
-
-convBelt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-convBelt.bind(("10.10.0.98", CONV_PORT))
-convBelt.listen(1)
 
 s_robotGrip.send(b'GET ACT\n')
 g_recv = str(s_robotGrip.recv(10), 'UTF-8')
@@ -32,7 +28,7 @@ GRABDOWN = -0.150
 coord = [0.116, -0.300, 0.200]
 rot = [0, -3.143, 0]
 s_robotArm.send(f'movel(p[{coord[0]},{coord[1]},{coord[2]},{rot[0]},{rot[1]},{rot[2]}],2,10,0,0)\n'.encode('utf-8'))
-time.sleep(4) 
+time.sleep(2) 
 
 
 rot = [2.28, 2.157, 0]
